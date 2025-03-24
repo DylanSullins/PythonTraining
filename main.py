@@ -46,16 +46,18 @@ def translate_data( data_to_translate ):
 def main():
     nonMacCases = {}
     macCases = {}
+
+    # CSV READING
     with open('inputs/input.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             caseNumber = row[0]
             if (int(caseNumber) % 9 == 0):
                 continue
-            while (True):
+            while (True): # Handling Duplicate Cases
                 if (caseNumber in nonMacCases.keys() or caseNumber in macCases.keys()):
                     print("Error! Duplicate Case Detected! Case #:", caseNumber)
-                    caseNumber += 'a'
+                    caseNumber += 'a' # Will be stripped before writing
                 else:
                     break
             issues = row[1]
@@ -66,15 +68,19 @@ def main():
             comms = row[6]
             gender = row[7]
             location = row[8]
+            # Save all data in DataPoint object, for possible expansion
             caseData = DataPoint.DP(caseNumber, issues, complexName, tag, landlord, yesNo, comms, gender, location)
+            # Handling MAC Properties
             if 'mac' in caseData.landlord.lstrip()[0:3].lower():
                 macCases[caseNumber] = caseData
             else:
                 nonMacCases[caseNumber] = caseData
-
+    # Sorting the cases by caseNumber 
     sortedMacCases = dict(sorted(macCases.items(), key=lambda item: int(''.join(filter(str.isdigit, item[0])))))
     sortedNonMacCases = dict(sorted(nonMacCases.items(), key=lambda item: int(''.join(filter(str.isdigit, item[0])))))
     
+    # CSV WRITING
+    #   Commented out portions are left in for possible expansion and use of other data
     with open('outputs/output.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for caseNumber in sortedMacCases.keys():
