@@ -2,3 +2,4 @@ inputs
 key
 outputs
 __pycache__
+.hypothesis
