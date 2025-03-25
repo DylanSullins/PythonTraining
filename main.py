@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 import csv
 from copy import deepcopy
-import DataPoint
 
 # I included some python libraries that I used to implement this, but you don't
 # have to use them if you don't want to! 
@@ -31,7 +30,35 @@ import DataPoint
 #       - Any tags marked as "Male" should be converted to say: "Male (he/him)"
 # This function should both write this data to an output file called: "outputs/output.csv" and return the list it wrote to the caller.
 def translate_data( data_to_translate ):
-    pass 
+    data_to_translate = sorted(data_to_translate, key = lambda i: int(i["Case Number"]))
+    macCases = []
+    nonMacCases = []
+    for i in data_to_translate:
+        if int(i["Case Number"]) % 9 == 0:
+            continue
+        gender = i["Gender"]
+        i["Gender"] = "Female (she/her)" if (gender.strip().lower() == "female") else "Male (he/him)" if (gender.strip().lower() == "male") else gender
+        if 'mac' in i["Landlord"].lstrip()[0:3].lower():
+            macCases.append(i)
+        else:
+            nonMacCases.append(i)
+    data_to_translate = []
+    for i in macCases:
+        data_to_translate.append(i)
+    for i in nonMacCases:
+        data_to_translate.append(i)
+
+    with open('outputs/output.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        for i in data_to_translate:
+            writer.writerow([
+                i["Case Number"],
+                i["Issue"],
+                i["Gender"],
+                i["Landlord"]
+            ])
+    return data_to_translate
+        
     
 
 
@@ -46,69 +73,20 @@ def translate_data( data_to_translate ):
 def main():
     nonMacCases = {}
     macCases = {}
-
+    allCases = []
     # CSV READING
     with open('inputs/input.csv', 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            caseNumber = row[0]
-            if (int(caseNumber) % 9 == 0):
-                continue
-            while (True): # Handling Duplicate Cases
-                if (caseNumber in nonMacCases.keys() or caseNumber in macCases.keys()):
-                    print("Error! Duplicate Case Detected! Case #:", caseNumber)
-                    caseNumber += 'a' # Will be stripped before writing
-                else:
-                    break
-            issues = row[1]
-            complexName = row[2]
-            tag = row[3]
-            landlord = row[4]
-            yesNo = row[5]
-            comms = row[6]
-            gender = row[7]
-            location = row[8]
-            # Save all data in DataPoint object, for possible expansion
-            caseData = DataPoint.DP(caseNumber, issues, complexName, tag, landlord, yesNo, comms, gender, location)
-            # Handling MAC Properties
-            if 'mac' in caseData.landlord.lstrip()[0:3].lower():
-                macCases[caseNumber] = caseData
-            else:
-                nonMacCases[caseNumber] = caseData
-    # Sorting the cases by caseNumber 
-    sortedMacCases = dict(sorted(macCases.items(), key=lambda item: int(''.join(filter(str.isdigit, item[0])))))
-    sortedNonMacCases = dict(sorted(nonMacCases.items(), key=lambda item: int(''.join(filter(str.isdigit, item[0])))))
-    
-    # CSV WRITING
-    #   Commented out portions are left in for possible expansion and use of other data
-    with open('outputs/output.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for caseNumber in sortedMacCases.keys():
-            point = macCases[caseNumber]
-            writer.writerow([
-                ''.join([i for i in point.caseNumber if i.isdigit()]),
-                point.issues,
-                #point.complexName,
-                #point.tag,
-                point.gender,
-                point.landlord,
-                #point.yesNo,
-                #point.comms,
-                #point.location
-            ])
-        for caseNumber in sortedNonMacCases.keys():
-            point = nonMacCases[caseNumber]
-            writer.writerow([
-                ''.join([i for i in point.caseNumber if i.isdigit()]),
-                point.issues,
-                #point.complexName,
-                #point.tag,
-                point.gender,
-                point.landlord,
-                #point.yesNo,
-                #point.comms,
-                #point.location
-            ])
+            allCases.append(
+                {
+                    "Case Number": row[0],
+                    "Issue": row[1],
+                    "Landlord": row[4],
+                    "Gender": row[7]
+                }
+            )
+    newList = translate_data(allCases)
 
 if __name__ == '__main__':
     main()
