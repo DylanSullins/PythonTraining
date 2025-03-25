@@ -53,14 +53,27 @@ def translate_data( data_to_translate ):
         for i in data_to_translate:
             writer.writerow([
                 i["Case Number"],
-                i["Issue"],
+                i["Issues"],
                 i["Gender"],
                 i["Landlord"]
             ])
     return data_to_translate
         
     
-
+def read_data():
+    allCases = []
+    with open('inputs/input.csv', 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            allCases.append(
+                {
+                    "Case Number": row[0],
+                    "Issues": row[1],
+                    "Landlord": row[4],
+                    "Gender": row[7]
+                }
+            )
+    return allCases
 
 # The majority of the work should be done in translate data. This function should
 # merely grab data out of the "inputs/input.csv" file from our package and convert
@@ -71,22 +84,8 @@ def translate_data( data_to_translate ):
     # { "Gender", _________ }
     # { "Issue", __________ }
 def main():
-    nonMacCases = {}
-    macCases = {}
-    allCases = []
-    # CSV READING
-    with open('inputs/input.csv', 'r', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            allCases.append(
-                {
-                    "Case Number": row[0],
-                    "Issue": row[1],
-                    "Landlord": row[4],
-                    "Gender": row[7]
-                }
-            )
-    newList = translate_data(allCases)
+    allCases = read_data()
+    allCases = translate_data(allCases)
 
 if __name__ == '__main__':
     main()
