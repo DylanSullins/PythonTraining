@@ -6,4 +6,4 @@ This project is my personal implementation of homework #1 for our (KCTenants) in
 
 In order to test this, you will need the test inputs found in the Tech Team shared drive (inputs, outputs, and key directories)
 
-This implementation currently (22 May 2025 18:09) passes unit and system tests. I fixed it a while ago but never updated the readme.
+This implementation currently (22 May 2025 18:09) does not pass tests. It passed the old tests, but not the new tests. Will update.
