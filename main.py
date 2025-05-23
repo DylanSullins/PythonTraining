@@ -38,7 +38,8 @@ def translate_data( data_to_translate ):
             continue
         gender = i["Gender"]
         i["Gender"] = "Female (she/her)" if (gender.strip().lower() == "female") else "Male (he/him)" if (gender.strip().lower() == "male") else gender
-        if 'mac' in i["Landlord"].lstrip()[0:3].lower():
+        # if 'mac' in i["Landlord"].lstrip()[0:3].lower():
+        if 'mac' in i["Landlord"].lower():
             macCases.append(i)
         else:
             nonMacCases.append(i)
