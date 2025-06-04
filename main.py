@@ -25,6 +25,9 @@ from copy import deepcopy
 #            ahead of cases with a different landlord.
 #       - Both subsets of cases ("Mac" and non-"Mac") should be ordered in     
 #            ascending order.
+#       - NOTE: Mac cases are determined by the string "mac" appearing anywhere
+#               in the landlord field, regardless of whether it is a Mac Properties 
+#               case or not. This is intentional to follow testing requirements.
 #   - Gender tags should be updated:
 #       - Any tags marked as "Female" should be converted to say: "Female (she/her)"
 #       - Any tags marked as "Male" should be converted to say: "Male (he/him)"
@@ -39,6 +42,7 @@ def translate_data( data_to_translate ):
         gender = i["Gender"]
         i["Gender"] = "Female (she/her)" if (gender.strip().lower() == "female") else "Male (he/him)" if (gender.strip().lower() == "male") else gender
         # if 'mac' in i["Landlord"].lstrip()[0:3].lower():
+        # Uncomment the above line and comment the below line to restrict to Mac Properties
         if 'mac' in i["Landlord"].lower():
             macCases.append(i)
         else:
