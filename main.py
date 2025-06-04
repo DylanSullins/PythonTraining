@@ -53,15 +53,6 @@ def translate_data( data_to_translate ):
     for i in nonMacCases:
         data_to_translate.append(i)
 
-    with open('outputs/output.csv', 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for i in data_to_translate:
-            writer.writerow([
-                i["Case Number"],
-                i["Issues"],
-                i["Gender"],
-                i["Landlord"]
-            ])
     return data_to_translate
         
     
@@ -80,6 +71,17 @@ def read_data():
             )
     return allCases
 
+def write_data(data_to_write):
+    with open('outputs/output.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        for i in data_to_write:
+            writer.writerow([
+                i["Case Number"],
+                i["Issues"],
+                i["Gender"],
+                i["Landlord"]
+            ])
+
 # The majority of the work should be done in translate data. This function should
 # merely grab data out of the "inputs/input.csv" file from our package and convert
 # it to a data_dictionary that translate_data() can use. 
@@ -91,6 +93,7 @@ def read_data():
 def main():
     allCases = read_data()
     allCases = translate_data(allCases)
+    write_data(allCases)
 
 if __name__ == '__main__':
     main()
